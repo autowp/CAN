@@ -51,7 +51,7 @@ public class CanComfort {
         return new CanFrame(CanComfort.ID_VIN, lastDigits.getBytes(charset));
     }
     
-    public static void emulateCar(CanClient client, String vin) throws CanComfortException 
+    public static void emulateBSIIgnition(CanClient client, String vin) throws CanComfortException 
     {
         try {
             client.addTimerTaskFrame(ignitionFrame(), 0, IGNITION_PERIOD);

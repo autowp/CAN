@@ -24,6 +24,11 @@ public class CurrentCDTrackMessage extends AbstractMessage {
 
         } else {
             
+            if (data.length < 3) {
+                String str = new String(Hex.encodeHex(data));
+                throw new MessageException("Message too short `" + str + "`");
+            }
+            
             if (!(data[0] == 0x20 && data[1] == 0x00)) {
                 String str = new String(Hex.encodeHex(data));
                 throw new MessageException("Unexpected data `" + str + "`");

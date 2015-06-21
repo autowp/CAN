@@ -29,8 +29,8 @@ public class CanClient {
     
     private List<Timer> timers = new ArrayList<Timer>();
     
-    public interface OnConnectedStateChangeListener {
-        void handleConnectedStateChange(boolean isConnected);
+    public interface OnClientConnectedStateChangeListener {
+        void handleClientConnectedStateChanged(boolean isConnected);
     }
     
     public interface OnCanFrameTransferListener {
@@ -49,8 +49,8 @@ public class CanClient {
         public void handleErrorEvent(CanClientException e);
     }
     
-    private List<OnConnectedStateChangeListener> mConnectedStateChangeListeners = 
-            new ArrayList<OnConnectedStateChangeListener>();
+    private List<OnClientConnectedStateChangeListener> mClientConnectedStateChangeListeners = 
+            new ArrayList<OnClientConnectedStateChangeListener>();
     
     private List<OnCanFrameTransferListener> mCanFrameTransferListeners = 
             new ArrayList<OnCanFrameTransferListener>();
@@ -164,9 +164,9 @@ public class CanClient {
             
     private synchronized void fireConnectedStateChangeEvent(boolean isConnected)
     {
-        Iterator<OnConnectedStateChangeListener> i = mConnectedStateChangeListeners.iterator();
+        Iterator<OnClientConnectedStateChangeListener> i = mClientConnectedStateChangeListeners.iterator();
         while(i.hasNext())  {
-            ((OnConnectedStateChangeListener) i.next()).handleConnectedStateChange(isConnected);
+            ((OnClientConnectedStateChangeListener) i.next()).handleClientConnectedStateChanged(isConnected);
         }
     }
     
@@ -199,7 +199,6 @@ public class CanClient {
     
     public CanClient disconnect()
     {
-        System.out.println("CanClient disconnect");
         this.stopTimers();
         
         adapter.disconnect();
