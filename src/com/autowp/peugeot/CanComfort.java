@@ -14,12 +14,13 @@ public class CanComfort {
     public static final int SPEED = 125; // kbit
     
     public static final int ID_IGNITION = 0x036;
-    public static final int ID_VIN = 0x2B6;
+    public static final int ID_CURRENT_CD_TRACK = 0x0A4;
+    public static final int ID_PARKTRONIC = 0x0E1;
     public static final int ID_TRACK_LIST = 0x125;
     public static final int ID_VOLUME = 0x1A5;
-    public static final int ID_CURRENT_CD_TRACK = 0x0A4;
     public static final int ID_AUDIO_MENU = 0x1E5;
-    public static final int ID_PARKTRONIC = 0x0E1;
+    public static final int ID_VIN = 0x2B6;
+    public static final int ID_CURRENT_CD_TRACK_INFO = 0x3A5;
     
     public static final int IGNITION_PERIOD = 200;
     
