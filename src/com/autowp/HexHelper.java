@@ -2,8 +2,6 @@ package com.autowp;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.commons.codec.binary.Hex;
-
 public class HexHelper {
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     
@@ -47,10 +45,10 @@ public class HexHelper {
         if (hexBytes.length % 2 != 0) {
             throw new HexException("Not even bytes count: " + hexBytes.length);
         }
-        String str = new String(Hex.encodeHex(hexBytes));
-        System.out.println("Hex: " + str);
+        /*String str = new String(Hex.encodeHex(hexBytes));
+        System.out.println("Hex: " + str);*/
         
-        int bytesCount = hexBytes.length / 2;
+        //int bytesCount = hexBytes.length / 2;
         
         String str2 = new String(hexBytes);
         

@@ -21,6 +21,7 @@ public class CanComfort {
     public static final int ID_AUDIO_MENU = 0x1E5;
     public static final int ID_VIN = 0x2B6;
     public static final int ID_CURRENT_CD_TRACK_INFO = 0x3A5;
+    public static final int ID_TIME = 0x3F6;
     
     public static final int IGNITION_PERIOD = 200;
     

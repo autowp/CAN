@@ -3,11 +3,12 @@ package com.autowp.peugeot.message;
 import com.autowp.can.CanMessage;
 
 public class CurrentCDTrackInfoMessage extends AbstractMessage {
-    private int mTrackNumber;
-    private int mMinutes;
-    private int mSeconds;
-    private int mSomeValue1;
-    private int mSomeValue2;
+    private byte mTrackNumber;
+    private byte mCurrentMinute;
+    private byte mCurrentSecond;
+    private byte mSomeValue;
+    private byte mTotalMinutes;
+    private byte mTotalSeconds;
 
     public CurrentCDTrackInfoMessage(CanMessage message) throws MessageException
     {
@@ -19,35 +20,74 @@ public class CurrentCDTrackInfoMessage extends AbstractMessage {
         
         mTrackNumber = data[0];
         
-        if (data[1] != 0x00) {
-            String str = String.format("%02X", data[1]);
-            throw new MessageException("Unexpected CurrentCDTrackInfo[1] value `" + str + "`");
-        }
+        mTotalMinutes = data[1];
+        mTotalSeconds = data[2];
         
-        if (data[2] != 0x00) {
-            String str = String.format("%02X", data[2]);
-            throw new MessageException("Unexpected CurrentCDTrackInfo[2] value `" + str + "`");
-        }
-        
-        mMinutes = data[3];
-        
-        mSeconds = data[4];
-        
-        if (data[5] != 0x00) {
-            String str = String.format("%02X", data[5]);
-            throw new MessageException("Unexpected CurrentCDTrackInfo[5] value `" + str + "`");
-        }
+        mCurrentMinute = data[3];
+        mCurrentSecond = data[4];
+
+        mSomeValue = data[5];
     }
 
-    public int getTrackNumber() {
+    public byte getTrackNumber() {
         return mTrackNumber;
     }
 
-    public int getMinutes() {
-        return mMinutes;
+    public byte getCurrentMinute() {
+        return mCurrentMinute;
     }
     
-    public int getSeconds() {
-        return mSeconds;
+    public byte getCurrentSecond() {
+        return mCurrentSecond;
+    }
+
+    public byte getSomeValue() {
+        return mSomeValue;
+    }
+    
+    public byte getTotalMinutes() {
+        return mTotalMinutes;
+    }
+    
+    public String getCurrentTime() {
+        String result = "";
+        if (mCurrentMinute == -1) {
+            result += "--";
+        } else {
+            result += String.format("%02d", mCurrentMinute);
+        }
+        
+        result += ":";
+        
+        if (mCurrentSecond == 0x7F) {
+            result += "--";
+        } else {
+            result += String.format("%02d", mCurrentSecond);
+        }
+        
+        return result;
+    }
+    
+    public String getTotalTime() {
+        String result = "";
+        if (mTotalMinutes == -1) {
+            result += "--";
+        } else {
+            result += String.format("%02d", mTotalMinutes);
+        }
+        
+        result += ":";
+        
+        if (mTotalSeconds == -1) {
+            result += "--";
+        } else {
+            result += String.format("%02d", mTotalSeconds);
+        }
+        
+        return result;
+    }
+    
+    public byte getTotalSeconds() {
+        return mTotalSeconds;
     }
 }
