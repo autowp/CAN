@@ -64,21 +64,22 @@ public class AudioMenuMessage extends AbstractMessage {
             throw new MessageException("AudioMenu message must be 7 bytes long");
         }
         
-        mShowSideBalance = (data[0] & 0x80) > 0;
+        mShowSideBalance = (data[0] & 0x80) != 0;
         int sideBalance = data[0] & 0x7F;
         if (!mBalanceValues.containsKey(sideBalance)) {
-            throw new MessageException("Unexpected SideBalance value");
+            String str = String.format("%02X", data[3]);
+            throw new MessageException("Unexpected SideBalance value `" + str + "`");
         }
         mSideBalance = mBalanceValues.get(sideBalance);
         
-        mShowBalance = (data[1] & 0x80) > 0;
+        mShowBalance = (data[1] & 0x80) != 0;
         int balance = data[1] & 0x7F;
         if (!mBalanceValues.containsKey(balance)) {
             throw new MessageException("Unexpected Balance value");
         }
         mBalance = mBalanceValues.get(balance);
         
-        mShowBass = (data[2] & 0x80) > 0;
+        mShowBass = (data[2] & 0x80) != 0;
         int bass = data[2] & 0x7F;
         if (!mBalanceValues.containsKey(bass)) {
             throw new MessageException("Unexpected Bass value");
@@ -90,22 +91,22 @@ public class AudioMenuMessage extends AbstractMessage {
             throw new MessageException("Unexpected AudioMenu[3] value `" + str + "`");
         }
         
-        mShowTreble = (data[4] & 0x80) > 0;
+        mShowTreble = (data[4] & 0x80) != 0;
         int treble = data[4] & 0x7F;
         if (!mBalanceValues.containsKey(treble)) {
             throw new MessageException("Unexpected Bass value");
         }
         mTreble = mBalanceValues.get(treble);
         
-        mShowLoudnessCorrection = (data[5] & 0x80) > 0;
-        mLoudnessCorrection = (data[5] & 0x40) > 0;
+        mShowLoudnessCorrection = (data[5] & 0x80) != 0;
+        mLoudnessCorrection = (data[5] & 0x40) != 0;
         
         if ((data[5] & 0x28) != 0x00) {
             String str = String.format("%02X", data[5]);
             throw new MessageException("Unexpected AudioMenu[5] value `" + str + "`");
         }
         
-        mShowAutomaticVolume = (data[5] & 0x10) > 0;
+        mShowAutomaticVolume = (data[5] & 0x10) != 0;
         int automaticVolume = data[5] & 0x07;
         switch (automaticVolume) {
             case 0x07:
@@ -125,7 +126,7 @@ public class AudioMenuMessage extends AbstractMessage {
             throw new MessageException("Unexpected AudioMenu[6] value");
         }
         
-        mShowMusicalAmbiance = (data[6] & 0x40) > 0;
+        mShowMusicalAmbiance = (data[6] & 0x40) != 0;
         mMusicalAmbiance = data[6] & 0x1F;
         
         if (!mMusicalAmbianceNames.containsKey(mMusicalAmbiance)) {
