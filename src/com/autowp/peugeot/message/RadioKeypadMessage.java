@@ -1,6 +1,9 @@
 package com.autowp.peugeot.message;
 
+import com.autowp.can.CanFrame;
+import com.autowp.can.CanFrameException;
 import com.autowp.can.CanMessage;
+import com.autowp.peugeot.CanComfort;
 
 public class RadioKeypadMessage extends AbstractMessage {
     
@@ -42,6 +45,11 @@ public class RadioKeypadMessage extends AbstractMessage {
     private boolean mRight;
 
     private boolean mLeft;
+    
+    public RadioKeypadMessage()
+    {
+        
+    }
 
     public RadioKeypadMessage(CanMessage message) throws MessageException
     {
@@ -115,5 +123,93 @@ public class RadioKeypadMessage extends AbstractMessage {
 
     public boolean isLeft() {
         return mLeft;
+    }
+    
+    public void setMenu(boolean value) {
+        mMenu = value;
+    }
+    
+    public void setClim(boolean value) {
+        mClim = value;
+    }
+
+    public void setTrip(boolean value) {
+        mTrip = value;
+    }
+    
+    public void setAudio(boolean value) {
+        mAudio = value;
+    }
+    
+    public void setOk(boolean value) {
+        mOk = value;
+    }
+    
+    public void setESC(boolean value) {
+        mESC = value;
+    }
+    
+    public void setDark(boolean value) {
+        mDark = value;
+    }
+    
+    public void setUp(boolean value) {
+        mUp = value;
+    }
+    
+    public void setDown(boolean value) {
+        mDown = value;
+    }
+    
+    public void setRight(boolean value) {
+        mRight = value;
+    }
+    
+    public void setLeft(boolean value) {
+        mLeft = value;
+    }
+    
+    public CanFrame assembleFrame() throws CanFrameException
+    {
+        byte data[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+        
+        if (mMenu) {
+            data[0] = (byte) (data[0] | MENU_BITMASK);
+        }
+        if (mClim) {
+            data[0] = (byte) (data[0] | CLIM_BITMASK);
+        }
+        
+        if (mTrip) {
+            data[1] = (byte) (data[1] | TRIP_BITMASK);
+        }
+        if (mAudio) {
+            data[1] = (byte) (data[1] | AUDIO_BITMASK);
+        }
+        
+        if (mOk) {
+            data[2] = (byte) (data[2] | OK_BITMASK);
+        }
+        if (mESC) {
+            data[2] = (byte) (data[2] | ESC_BITMASK);
+        }
+        if (mDark) {
+            data[2] = (byte) (data[2] | DARK_BITMASK);
+        }
+        
+        if (mUp) {
+            data[5] = (byte) (data[5] | UP_BITMASK);
+        }
+        if (mDown) {
+            data[5] = (byte) (data[5] | DOWN_BITMASK);
+        }
+        if (mRight) {
+            data[5] = (byte) (data[5] | RIGHT_BITMASK);
+        }
+        if (mLeft) {
+            data[5] = (byte) (data[5] | LEFT_BITMASK);
+        }
+
+        return new CanFrame(CanComfort.ID_RADIO_KEYPAD, data);
     }
 }

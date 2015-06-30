@@ -18,6 +18,7 @@ public class CanComfort {
     public static final int ID_PARKTRONIC = 0x0E1;
     public static final int ID_TRACK_LIST = 0x125;
     public static final int ID_VOLUME = 0x1A5;
+    public static final int ID_RADIO_1 = 0x1E0;
     public static final int ID_AUDIO_MENU = 0x1E5;
     public static final int ID_COLUMN_KEYPAD = 0x21F;
     public static final int ID_RDS = 0x265;

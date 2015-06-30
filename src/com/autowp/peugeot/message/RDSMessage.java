@@ -96,7 +96,7 @@ public class RDSMessage extends AbstractMessage {
         
         this.assertConstBits(
             data,
-            new byte[] { (byte) 0x5E, 0x3F, 0x00, (byte) 0xFF}, 
+            new byte[] { (byte) 0x6E, 0x3F, 0x00, (byte) 0xFF}, 
             new byte[] { (byte) 0x00, 0x00, 0x00,        0x00}
         );
         

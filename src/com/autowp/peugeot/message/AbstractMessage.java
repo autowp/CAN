@@ -10,7 +10,7 @@ public abstract class AbstractMessage {
         for (int i=0; i<mask.length; i++) {
             if ((data[i] & mask[i]) != value[i]) {
                 String className = this.getClass().getName();
-                String str = String.format("Unexpected %s[%d] value `%02X`", className, i, data[i]);
+                String str = String.format("Unexpected %s[%d] value: %02X & %02X != %02X", className, i, data[i],  mask[i], value[i]);
                 throw new MessageException(str);
             }
         }
