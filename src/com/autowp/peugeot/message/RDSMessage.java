@@ -7,7 +7,9 @@ import com.autowp.can.CanMessage;
 public class RDSMessage extends AbstractMessage {
     
     private static final int DATA_LENGTH = 4;
+    private static final byte RDS_SEARCH_BITMASK = (byte) 0x80;
     private static final byte TA_BITMASK = 0x10;
+    private static final byte REG_MODE_BITMASK = 0x01;
     private static final byte PTY_MENU_BITMASK = 0x40;
     private static final byte PTY_BITMASK = (byte) 0x80;
     
@@ -15,6 +17,8 @@ public class RDSMessage extends AbstractMessage {
     private boolean mShowPTYMenu;
     private byte mPTYValue;
     private boolean mPTY;
+    private boolean mRDSSearchActivated;
+    private boolean mREGModeActivated;
     
     private static final byte PTY_DISABLED = 0x00;
     private static final byte PTY_NEWS     = 0x01;
@@ -81,7 +85,7 @@ public class RDSMessage extends AbstractMessage {
         put(PTY_FOLK_M, "Folk M");
         put(PTY_DOCUMENT, "Document");
     }};
-    
+
     public RDSMessage(CanMessage message) throws MessageException
     {
         byte[] data = message.getData();
@@ -90,25 +94,19 @@ public class RDSMessage extends AbstractMessage {
             throw new MessageException("RDS message must be " + DATA_LENGTH + " bytes long");
         }
         
+        this.assertConstBits(
+            data,
+            new byte[] { (byte) 0x5E, 0x3F, 0x00, (byte) 0xFF}, 
+            new byte[] { (byte) 0x00, 0x00, 0x00,        0x00}
+        );
+        
+        mRDSSearchActivated = (data[0] & RDS_SEARCH_BITMASK) != 0x00;
         mTA = (data[0] & TA_BITMASK) != 0x00;
-        if ((data[0] & 0xEF) != 0x80) {
-            String str = String.format("%02X", data[0]);
-            throw new MessageException("Unexpected RDSMessage[0] value `" + str + "`");
-        }
+        mREGModeActivated = (data[0] & REG_MODE_BITMASK) != 0x00;
         
         mPTY = (data[1] & PTY_BITMASK) != 0x00;
         mShowPTYMenu = (data[1] & PTY_MENU_BITMASK) != 0x00;
-        if ((data[1] & 0x3F) != 0x00) {
-            String str = String.format("%02X", data[1]);
-            throw new MessageException("Unexpected RDSMessage[1] value `" + str + "`");
-        }
-        
         mPTYValue = data[2];
-        
-        if ((data[3] & 0xFF) != 0x00) {
-            String str = String.format("%02X", data[3]);
-            throw new MessageException("Unexpected RDSMessage[3] value `" + str + "`");
-        }
     }
 
     public boolean isTA() {
@@ -131,4 +129,11 @@ public class RDSMessage extends AbstractMessage {
         return mPTY;
     }
 
+    public boolean isRDSSearchActivated() {
+        return mRDSSearchActivated;
+    }
+    
+    public boolean isREGModeActivated() {
+        return mREGModeActivated;
+    }
 }
