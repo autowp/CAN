@@ -310,8 +310,13 @@ public class CanClient {
     
     public void addTimerTaskFrame(CanFrame frame, long delay, long period)
     {
+        addTimerTaskFrame(frame, delay, period, false);
+    }
+    
+    public void addTimerTaskFrame(CanFrame frame, long delay, long period, boolean receive)
+    {
         Timer timer = new Timer();
-        timer.schedule(new FrameTimerTask(this, frame), delay, period);
+        timer.schedule(new FrameTimerTask(this, frame, receive), delay, period);
         
         this.timers.add(timer);
     }
@@ -319,29 +324,46 @@ public class CanClient {
     public class FrameTimerTask extends TimerTask {
         private CanClient client;
         private CanFrame frame;
+        private boolean receive;
         
         public FrameTimerTask(CanClient client, CanFrame frame)
         {
+            this(client, frame, false);
+        }
+        
+        public FrameTimerTask(CanClient client, CanFrame frame, boolean receive)
+        {
             this.client = client;
             this.frame = frame;
+            this.receive = receive;
         }
         
         public void run() {
             try {
                 this.client.send(this.frame);
+                if (receive) {
+                    this.client.receive(this.frame);
+                }
             } catch (CanClientException e) {
                 fireErrorEvent(e);
             }
         }
     }
+    
+    public void sendDelayedFrame(final CanFrame frame, final int delay) {
+        sendDelayedFrame(frame, delay, false);
+    }
 
-    public void sendDelayedFrame(final CanFrame frame, int delay) {
+    public void sendDelayedFrame(final CanFrame frame, final int delay, final boolean receive) {
         final CanClient client = this;
-        new Timer().schedule(new TimerTask() {          
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
                     client.send(frame);
+                    if (receive) {
+                        client.receive(frame);
+                    }
                 } catch (CanClientException e) {
                     fireErrorEvent(e);
                 }
@@ -349,7 +371,7 @@ public class CanClient {
         }, delay);
     }
     
-    public void receive(CanFrame frame)
+    public void receive(final CanFrame frame)
     {
         adapter.receive(frame);
     }
