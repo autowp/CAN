@@ -9,6 +9,9 @@ public class DisplayStatusMessage extends AbstractMessage {
 
     private boolean mOff;
 
+    private byte mUnknown1;
+    private byte mUnknown2;
+
     public DisplayStatusMessage(CanMessage message) throws MessageException
     {
         byte[] data = message.getData();
@@ -19,14 +22,24 @@ public class DisplayStatusMessage extends AbstractMessage {
         
         this.assertConstBits(
             data,
-            new byte[] { (byte) 0xFF, (byte) 0xDF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF}, 
-            new byte[] {        0x09,        0x06,        0x17,        0x70,        0x7F, (byte) 0xFF,        0x00,        0x00 }
+            new byte[] { (byte) 0xFF, (byte) 0xDF, 0x00, (byte) 0x00, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF}, 
+            new byte[] {        0x09,        0x06, 0x00,        0x00,        0x7F, (byte) 0xFF,        0x00,        0x00 }
         );
         
         mOff = (data[1] & OFF_BITMASK) != 0x00;
+        mUnknown1 = data[2];
+        mUnknown2 = data[3];
     }
 
     public boolean isOff() {
         return mOff;
+    }
+    
+    public byte getUnknown1() {
+        return mUnknown1;
+    }
+    
+    public byte getUnknown2() {
+        return mUnknown2;
     }
 }
