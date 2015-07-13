@@ -5,7 +5,7 @@ import com.autowp.can.CanFrameException;
 import com.autowp.can.CanMessage;
 import com.autowp.peugeot.CanComfort;
 
-public class BsiInfoMessage extends AbstractMessage {
+public class BSIInfoMessage extends AbstractMessage {
     private static final int DATA_LENGTH = 8;
     
     private static final byte REVERSE_BITMASK = (byte) 0x80;
@@ -19,12 +19,12 @@ public class BsiInfoMessage extends AbstractMessage {
 
     private int mOdometer;
     
-    public BsiInfoMessage()
+    public BSIInfoMessage()
     {
         
     }
 
-    public BsiInfoMessage(CanMessage message) throws MessageException
+    public BSIInfoMessage(CanMessage message) throws MessageException
     {
         byte[] data = message.getData();
         
