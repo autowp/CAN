@@ -1,4 +1,4 @@
-package com.autowp.peugeot.parktronic;
+package com.autowp.psa.parktronic;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +12,7 @@ import com.autowp.can.CanClient;
 import com.autowp.can.CanClientException;
 import com.autowp.can.CanFrame;
 import com.autowp.can.CanFrameException;
-import com.autowp.peugeot.CanComfort;
+import com.autowp.psa.CanComfort;
 
 public class ParktronicEmulation {
     private CanClient mCanClient;

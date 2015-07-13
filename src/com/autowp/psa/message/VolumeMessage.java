@@ -1,9 +1,9 @@
-package com.autowp.peugeot.message;
+package com.autowp.psa.message;
 
 import org.apache.commons.codec.binary.Hex;
 
 import com.autowp.can.CanMessage;
-import com.autowp.peugeot.CanComfort;
+import com.autowp.psa.CanComfort;
 
 public class VolumeMessage extends AbstractMessage {
     

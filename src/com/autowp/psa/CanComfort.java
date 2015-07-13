@@ -1,4 +1,4 @@
-package com.autowp.peugeot;
+package com.autowp.psa;
 
 import java.nio.charset.Charset;
 
@@ -26,7 +26,7 @@ public class CanComfort {
     public static final int ID_RADIO_KEYPAD = 0x3E5;
     public static final int ID_TIME = 0x3F6;
     
-    public static final int BSI_STATUS_PERIOD = 200;
+    public static final int BSI_STATUS_PERIOD = 100;
     public static final int BSI_INFO_PERIOD = 500;
     public static final int BSI_INFO_WINDOW_PERIOD = 200;
     

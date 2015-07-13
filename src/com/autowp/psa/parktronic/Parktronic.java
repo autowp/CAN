@@ -1,4 +1,4 @@
-package com.autowp.peugeot.parktronic;
+package com.autowp.psa.parktronic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,9 +7,9 @@ import java.util.List;
 
 import com.autowp.can.CanClient;
 import com.autowp.can.CanMessage;
-import com.autowp.peugeot.CanComfort;
-import com.autowp.peugeot.message.MessageException;
-import com.autowp.peugeot.message.ParktronicMessage;
+import com.autowp.psa.CanComfort;
+import com.autowp.psa.message.MessageException;
+import com.autowp.psa.message.ParktronicMessage;
 
 public class Parktronic {
     

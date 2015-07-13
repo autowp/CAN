@@ -1,4 +1,4 @@
-package com.autowp.peugeot;
+package com.autowp.psa;
 
 @SuppressWarnings("serial")
 public class CanComfortException extends Exception {

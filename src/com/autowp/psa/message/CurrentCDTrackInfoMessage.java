@@ -1,4 +1,4 @@
-package com.autowp.peugeot.message;
+package com.autowp.psa.message;
 
 import com.autowp.can.CanMessage;
 

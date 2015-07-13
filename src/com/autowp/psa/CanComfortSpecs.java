@@ -1,4 +1,4 @@
-package com.autowp.peugeot;
+package com.autowp.psa;
 
 import com.autowp.can.CanBusSpecs;
 

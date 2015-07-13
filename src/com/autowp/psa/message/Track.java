@@ -1,8 +1,8 @@
-package com.autowp.peugeot.message;
+package com.autowp.psa.message;
 
 import org.apache.commons.codec.binary.Hex;
 
-import com.autowp.peugeot.CanComfort;
+import com.autowp.psa.CanComfort;
 
 public class Track {
     protected String author;

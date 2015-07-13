@@ -1,4 +1,4 @@
-package com.autowp.peugeot.message;
+package com.autowp.psa.message;
 
 @SuppressWarnings("serial")
 public class MessageException extends Exception {

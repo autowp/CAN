@@ -1,4 +1,4 @@
-package com.autowp.peugeot.message;
+package com.autowp.psa.message;
 
 public abstract class AbstractMessage {
     protected void assertConstBits(byte[] data, byte[] mask, byte[] value) throws MessageException

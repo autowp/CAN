@@ -1,9 +1,9 @@
-package com.autowp.peugeot.message;
+package com.autowp.psa.message;
 
 import com.autowp.can.CanFrame;
 import com.autowp.can.CanFrameException;
 import com.autowp.can.CanMessage;
-import com.autowp.peugeot.CanComfort;
+import com.autowp.psa.CanComfort;
 
 public class RadioKeypadMessage extends AbstractMessage {
     
