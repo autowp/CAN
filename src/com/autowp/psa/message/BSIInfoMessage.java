@@ -11,7 +11,7 @@ public class BSIInfoMessage extends AbstractMessage {
     private static final byte REVERSE_BITMASK = (byte) 0x80;
     private static final byte GEAR_BITMASK = 0x07;
 
-    private float mTemperature;
+    private double mTemperature;
 
     private boolean mReverse;
 
@@ -49,11 +49,11 @@ public class BSIInfoMessage extends AbstractMessage {
         mOdometer = ((data[2] << 16) & 0x00FF0000) + ((data[3] << 8) & 0x0000FF00) + (data[4] & 0x000000FF);
     }
 
-    public float getTemperature() {
+    public double getTemperature() {
         return mTemperature;
     }
     
-    public void setTemperature(float value) {
+    public void setTemperature(double value) {
         this.mTemperature = value;
     }
 

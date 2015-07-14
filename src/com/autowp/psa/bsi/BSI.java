@@ -12,32 +12,49 @@ import com.autowp.psa.CanComfort;
 import com.autowp.psa.message.BSIInfoMessage;
 import com.autowp.psa.message.BSIInfoWindowMessage;
 import com.autowp.psa.message.BSIStatusMessage;
+import com.autowp.psa.message.BSIVINMessage;
+import com.autowp.psa.message.MessageException;
 
 public class BSI {
     private CanClient mCanClient;
-    private String mVIN = null;
-    private Timer mStatusTimer;
-    private Timer mInfoTimer;
     private boolean mReceive = true;
-    private BSIInfoWindowMessage mInfowWindowMessage;
-    private Timer mInfoWindowTimer;
-    public BSIStatusMessage mStatusMessage;
     
-    private class BSITimerTask extends TimerTask {
-        private CanFrame frame;
-        
-        public BSITimerTask(CanFrame frame)
-        {
-            this.frame = frame;
-        }
-        
+    private BSIInfoMessage mInfoMessage = new BSIInfoMessage();
+    private Timer mInfoTimer;
+    
+    private BSIInfoWindowMessage mInfowWindowMessage = new BSIInfoWindowMessage();
+    private Timer mInfoWindowTimer;
+    
+    private BSIStatusMessage mStatusMessage = new BSIStatusMessage();
+    private Timer mStatusTimer;
+    
+    private BSIVINMessage mVINMessage = new BSIVINMessage();
+    private Timer mVINTimer;
+    
+    private class InfoTimerTask extends TimerTask {
         public void run() {
             try {
-                mCanClient.send(this.frame);
+                CanFrame frame = mInfoMessage.assembleFrame();
+                mCanClient.send(frame);
                 if (mReceive) {
-                    mCanClient.receive(this.frame);
+                    mCanClient.receive(frame);
                 }
-            } catch (CanClientException e) {
+            } catch (CanFrameException | CanClientException e) {
+                //fireErrorEvent(e);
+            }
+        }
+    }
+    
+    
+    private class VINTimerTask extends TimerTask {
+        public void run() {
+            try {
+                CanFrame frame = mVINMessage.assembleFrame();
+                mCanClient.send(frame);
+                if (mReceive) {
+                    mCanClient.receive(frame);
+                }
+            } catch (CanFrameException | CanClientException e) {
                 //fireErrorEvent(e);
             }
         }
@@ -83,31 +100,15 @@ public class BSI {
     public BSI(CanClient canClient) {
         mCanClient = canClient;
         
-        mInfowWindowMessage = new BSIInfoWindowMessage();
-        mStatusMessage = new BSIStatusMessage();
+        
     }
 
     public String getVIN() {
-        return mVIN;
+        return mVINMessage.getVIN();
     }
 
-    public void setVIN(String VIN) {
-        mVIN = VIN;
-    }
-    
-    public void sendVIN() throws BSIException, CanFrameException {
-        mCanClient.sendDelayedFrame(vinFrame(mVIN), CanComfort.VIN_DELAY, true);
-    }
-    
-    private static CanFrame vinFrame(String vin) throws BSIException, CanFrameException 
-    {
-        int length = vin.length();
-        if (length < CanComfort.VIN_LENGTH) {
-            throw new BSIException("Vin require at least " + CanComfort.VIN_LENGTH + " last digits");
-        }
-        
-        String lastDigits = vin.substring(length - CanComfort.VIN_LENGTH, length);
-        return new CanFrame(CanComfort.ID_VIN, lastDigits.getBytes(CanComfort.charset));
+    public void setVIN(String VIN) throws MessageException {
+        mVINMessage.setVIN(VIN);
     }
     
     public void startStatus() throws CanFrameException
@@ -130,23 +131,17 @@ public class BSI {
         }
     }
     
-    private static CanFrame infoFrame() throws CanFrameException
-    {
-        final Random random = new Random();
-        BSIInfoMessage message = new BSIInfoMessage();
-        message.setGear((byte) random.nextInt(7));
-        message.setIsReverse(random.nextBoolean());
-        message.setTemperature(random.nextFloat() * 125 - 40);
-        message.setOdometer(random.nextInt(0x00FFFFFF));
-        
-        return message.assembleFrame();
-    }
-    
     public void startInfo() throws CanFrameException
     {
         stopInfo();
         
-        BSITimerTask task = new BSITimerTask(infoFrame());
+        final Random random = new Random();
+        mInfoMessage.setGear((byte) random.nextInt(7));
+        mInfoMessage.setIsReverse(random.nextBoolean());
+        mInfoMessage.setTemperature(random.nextFloat() * 125 - 40);
+        mInfoMessage.setOdometer(random.nextInt(0x00FFFFFF));
+        
+        InfoTimerTask task = new InfoTimerTask();
         
         Timer timer = new Timer();
         timer.schedule(task, 0, CanComfort.BSI_INFO_PERIOD);
@@ -224,5 +219,37 @@ public class BSI {
 
     public boolean isDashboardLightingEnabled() {
         return mStatusMessage.isDashboardLightningEnabled();
+    }
+    
+    public void startVIN()
+    {
+        stopVIN();
+        
+        VINTimerTask task = new VINTimerTask();
+        
+        Timer timer = new Timer();
+        timer.schedule(task, 0, CanComfort.BSI_VIN_PERIOD);
+        
+        mVINTimer = timer;
+    }
+    
+    public void stopVIN()
+    {
+        if (mVINTimer != null) {
+            mVINTimer.cancel();
+            mVINTimer = null;
+        }
+    }
+    
+    public boolean isVINStarted() {
+        return mVINTimer != null;
+    }
+    
+    public void setTemperature(double temperature) {
+        mInfoMessage.setTemperature(temperature);
+    }
+    
+    public double getTemperature() {
+        return mInfoMessage.getTemperature();
     }
 }

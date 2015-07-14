@@ -11,10 +11,13 @@ public class RadioMessage1 extends AbstractMessage {
     private static final byte RANDOM_PLAY_BITMASK = 0x04;
     private static final byte UNKNOWN3_BITMASK = 0x03;
     
+    private static final byte UNKNOWN4_BITMASK = (byte) 0xC0;
     private static final byte ALT_FREQUENCIES_BITMASK = 0x20;
+    private static final byte UNKNOWN5_BITMASK = 0x1F;
     
     private static final byte REG_MODE_BITMASK = (byte) 0x80;
     
+    private static final byte UNKNOWN6_BITMASK = (byte) 0x80;
     private static final byte RADIO_TEXT_BITMASK = 0x20;
 
     private boolean mTrackIntro;
@@ -26,12 +29,18 @@ public class RadioMessage1 extends AbstractMessage {
     private boolean mRadioText;
 
     private boolean mRegMode;
+    
+    private byte mUnknown1;
 
     private boolean mUnknown2;
 
     private byte mUnknown3;
-
-    private byte mUnknown1;
+    
+    private byte mUnknown4;
+    
+    private byte mUnknown5;
+    
+    private byte mUnknown6;
 
     public RadioMessage1(CanMessage message) throws MessageException
     {
@@ -46,29 +55,32 @@ public class RadioMessage1 extends AbstractMessage {
             new byte[] { 
                 ~(UNKNOWN1_BITMASK | TRACK_INTRO_BITMASK | UNKNOWN2_BITMASK | RANDOM_PLAY_BITMASK | UNKNOWN3_BITMASK),
                 (byte) 0xFF,
-                ~ALT_FREQUENCIES_BITMASK,
+                ~(ALT_FREQUENCIES_BITMASK | UNKNOWN4_BITMASK | UNKNOWN5_BITMASK),
                 ~REG_MODE_BITMASK,
-                ~RADIO_TEXT_BITMASK
+                ~(UNKNOWN6_BITMASK | RADIO_TEXT_BITMASK)
             }, 
             new byte[] {
-                (byte) 0x00,
                 0x00,
-                (byte) 0x82,
                 0x00,
-                (byte) 0x80
+                0x00,
+                0x00,
+                0x00
             }
         );
         
-        mUnknown1 = (byte) (data[0] & UNKNOWN1_BITMASK);
+        mUnknown1 = (byte) ((byte) (data[0] & UNKNOWN1_BITMASK) >> 6);
         mTrackIntro = (data[0] & TRACK_INTRO_BITMASK) != 0x00;
         mUnknown2 = (data[0] & UNKNOWN2_BITMASK) != 0x00;
         mRandomPlay = (data[0] & RANDOM_PLAY_BITMASK) != 0x00;
         mUnknown3 = (byte) (data[0] & UNKNOWN3_BITMASK);
         
+        mUnknown4 = (byte) (data[2] & UNKNOWN4_BITMASK);
         mAltFreqencies = (data[2] & ALT_FREQUENCIES_BITMASK) != 0x00;
+        mUnknown5 = (byte) (data[2] & UNKNOWN5_BITMASK);
         
         mRegMode = (data[3] & REG_MODE_BITMASK) != 0x00;
         
+        mUnknown6 = (byte) (data[4] & UNKNOWN6_BITMASK);
         mRadioText = (data[4] & RADIO_TEXT_BITMASK) != 0x00;
     }
 
@@ -134,5 +146,29 @@ public class RadioMessage1 extends AbstractMessage {
 
     public void setUnknown1(byte mUnknown1) {
         this.mUnknown1 = mUnknown1;
+    }
+    
+    public byte getUnknown4() {
+        return mUnknown4;
+    }
+
+    public void setUnknown4(byte unknown4) {
+        mUnknown4 = unknown4;
+    }
+
+    public byte getUnknown5() {
+        return mUnknown5;
+    }
+
+    public void setUnknown5(byte mUnknown5) {
+        this.mUnknown5 = mUnknown5;
+    }
+
+    public byte getUnknown6() {
+        return mUnknown6;
+    }
+
+    public void setUnknown6(byte mUnknown6) {
+        this.mUnknown6 = mUnknown6;
     }
 }

@@ -29,6 +29,7 @@ public class CanComfort {
     public static final int BSI_STATUS_PERIOD = 100;
     public static final int BSI_INFO_PERIOD = 500;
     public static final int BSI_INFO_WINDOW_PERIOD = 200;
+    public static final int BSI_VIN_PERIOD = 1000;
     
     public static final int VIN_DELAY = 300;
     public static final int VIN_LENGTH = 8;
