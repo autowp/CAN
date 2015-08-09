@@ -1,8 +1,10 @@
 package com.autowp.psa.message;
 
 import com.autowp.can.CanMessage;
+import com.autowp.psa.CanComfort;
 
-public class RadioMessage1 extends AbstractMessage {
+public class Radio1Message extends AbstractMessage {
+    private static final int ID = CanComfort.ID_RADIO_1;
     private static final int DATA_LENGTH = 5;
     
     private static final byte UNKNOWN1_BITMASK = (byte) 0xC0;
@@ -10,6 +12,8 @@ public class RadioMessage1 extends AbstractMessage {
     private static final byte UNKNOWN2_BITMASK = 0x10;
     private static final byte RANDOM_PLAY_BITMASK = 0x04;
     private static final byte UNKNOWN3_BITMASK = 0x03;
+    
+    private static final byte CD_REPEAT_BITMASK = (byte) 0x80;
     
     private static final byte UNKNOWN4_BITMASK = (byte) 0xC0;
     private static final byte ALT_FREQUENCIES_BITMASK = 0x20;
@@ -41,20 +45,26 @@ public class RadioMessage1 extends AbstractMessage {
     private byte mUnknown5;
     
     private byte mUnknown6;
+    
+    private boolean mCDRepeat;
 
-    public RadioMessage1(CanMessage message) throws MessageException
+    public Radio1Message(CanMessage message) throws MessageException
     {
+        if (message.getId() != ID) {
+            throw new MessageException(String.format("Radio1 message have ID %s", ID));
+        }
+        
         byte[] data = message.getData();
         
         if (data.length != DATA_LENGTH) {
-            throw new MessageException("RadioMessage1 message must be " + DATA_LENGTH + " bytes long");
+            throw new MessageException("Radio1 message must be " + DATA_LENGTH + " bytes long");
         }
         
         this.assertConstBits(
             data,
             new byte[] { 
                 ~(UNKNOWN1_BITMASK | TRACK_INTRO_BITMASK | UNKNOWN2_BITMASK | RANDOM_PLAY_BITMASK | UNKNOWN3_BITMASK),
-                (byte) 0xFF,
+                ~(CD_REPEAT_BITMASK),
                 ~(ALT_FREQUENCIES_BITMASK | UNKNOWN4_BITMASK | UNKNOWN5_BITMASK),
                 ~REG_MODE_BITMASK,
                 ~(UNKNOWN6_BITMASK | RADIO_TEXT_BITMASK)
@@ -73,6 +83,8 @@ public class RadioMessage1 extends AbstractMessage {
         mUnknown2 = (data[0] & UNKNOWN2_BITMASK) != 0x00;
         mRandomPlay = (data[0] & RANDOM_PLAY_BITMASK) != 0x00;
         mUnknown3 = (byte) (data[0] & UNKNOWN3_BITMASK);
+        
+        mCDRepeat = (byte) (data[1] & CD_REPEAT_BITMASK) != 0x00;
         
         mUnknown4 = (byte) (data[2] & UNKNOWN4_BITMASK);
         mAltFreqencies = (data[2] & ALT_FREQUENCIES_BITMASK) != 0x00;
@@ -170,5 +182,13 @@ public class RadioMessage1 extends AbstractMessage {
 
     public void setUnknown6(byte mUnknown6) {
         this.mUnknown6 = mUnknown6;
+    }
+    
+    public boolean getCDRepeat() {
+        return mCDRepeat;
+    }
+
+    public void setCDRepeat(boolean value) {
+        mCDRepeat = value;
     }
 }

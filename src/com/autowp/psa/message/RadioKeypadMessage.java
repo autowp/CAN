@@ -10,6 +10,7 @@ public class RadioKeypadMessage extends AbstractMessage {
     private static final int DATA_LENGTH = 6;
     
     private static final byte MENU_BITMASK = 0x40;
+    private static final byte TEL_BITMASK = 0x10;
     private static final byte CLIM_BITMASK = 0x01;
     
     private static final byte TRIP_BITMASK = 0x40;
@@ -45,6 +46,8 @@ public class RadioKeypadMessage extends AbstractMessage {
     private boolean mRight;
 
     private boolean mLeft;
+
+    private boolean mTel;
     
     public RadioKeypadMessage()
     {
@@ -61,11 +64,12 @@ public class RadioKeypadMessage extends AbstractMessage {
         
         this.assertConstBits(
             data,
-            new byte[] {(byte) 0xBE, (byte) 0xBE, (byte) 0xAB, (byte) 0xFF, (byte) 0xFF, (byte) 0xAA}, 
+            new byte[] {(byte) 0xAE, (byte) 0xBE, (byte) 0xAB, (byte) 0xFF, (byte) 0xFF, (byte) 0xAA}, 
             new byte[] {       0x00,        0x00,        0x00,        0x00,        0x00,        0x00}
         );
         
         mMenu  = (data[0] & MENU_BITMASK) != 0x00;
+        mTel  = (data[0] & TEL_BITMASK) != 0x00;
         mClim  = (data[0] & CLIM_BITMASK) != 0x00;
         
         mTrip  = (data[1] & TRIP_BITMASK) != 0x00;
@@ -125,6 +129,10 @@ public class RadioKeypadMessage extends AbstractMessage {
         return mLeft;
     }
     
+    public boolean isTel() {
+        return mTel;
+    }
+    
     public void setMenu(boolean value) {
         mMenu = value;
     }
@@ -169,12 +177,19 @@ public class RadioKeypadMessage extends AbstractMessage {
         mLeft = value;
     }
     
+    public void setTel(boolean value) {
+        mTel = value;
+    }
+    
     public CanFrame assembleFrame() throws CanFrameException
     {
         byte data[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
         
         if (mMenu) {
             data[0] = (byte) (data[0] | MENU_BITMASK);
+        }
+        if (mTel) {
+            data[0] = (byte) (data[0] | TEL_BITMASK);
         }
         if (mClim) {
             data[0] = (byte) (data[0] | CLIM_BITMASK);

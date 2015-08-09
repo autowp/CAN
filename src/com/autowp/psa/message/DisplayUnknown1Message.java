@@ -1,12 +1,14 @@
 package com.autowp.psa.message;
 
 import com.autowp.can.CanMessage;
+import com.autowp.psa.CanComfort;
 
 public class DisplayUnknown1Message extends AbstractMessage {
+    private static final int ID = CanComfort.ID_DISPLAY_UNKNOWN1;
     private static final int DATA_LENGTH = 3;
     
     private static final byte UNKNOWN1_BITMASK = (byte) 0x80;
-    private static final byte UNKNOWN3_BITMASK = (byte) 0x02;
+    private static final byte UNKNOWN3_BITMASK = (byte) 0x03;
     
     private static final byte UNKNOWN4_BITMASK = (byte) 0x70;
     private static final byte UNKNOWN5_BITMASK = (byte) 0x07;
@@ -17,7 +19,7 @@ public class DisplayUnknown1Message extends AbstractMessage {
 
     private boolean mUnknown2;
 
-    private boolean mUnknown3;
+    private byte mUnknown3;
     
     private byte mUnknown4;
     
@@ -25,10 +27,14 @@ public class DisplayUnknown1Message extends AbstractMessage {
 
     public DisplayUnknown1Message(CanMessage message) throws MessageException
     {
+        if (message.getId() != ID) {
+            throw new MessageException(String.format("DisplayUnknown1 message have ID %s", ID));
+        }
+        
         byte[] data = message.getData();
         
         if (data.length != DATA_LENGTH) {
-            throw new MessageException("DisplayStatus message must be " + DATA_LENGTH + " bytes long");
+            throw new MessageException("DisplayUnknown1 message must be " + DATA_LENGTH + " bytes long");
         }
         
         this.assertConstBits(
@@ -46,7 +52,7 @@ public class DisplayUnknown1Message extends AbstractMessage {
         );
         
         mUnknown1 = (data[0] & UNKNOWN1_BITMASK) != 0x00;
-        mUnknown3 = (data[0] & UNKNOWN3_BITMASK) != 0x00;
+        mUnknown3 = (byte) (data[0] & UNKNOWN3_BITMASK);
         
         mUnknown4 = (byte) ((byte) (data[1] & UNKNOWN4_BITMASK) >> 4);
         mUnknown5 = (byte) (data[1] & UNKNOWN5_BITMASK);
@@ -62,7 +68,7 @@ public class DisplayUnknown1Message extends AbstractMessage {
         return mUnknown2;
     }
 
-    public boolean isUnknown3() {
+    public byte getUnknown3() {
         return mUnknown3;
     }
 

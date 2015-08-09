@@ -3,10 +3,13 @@ package com.autowp.psa.message;
 import java.util.HashMap;
 
 import com.autowp.can.CanMessage;
+import com.autowp.psa.CanComfort;
 
 public class RDSMessage extends AbstractMessage {
     
+    private static final int ID = CanComfort.ID_RDS;
     private static final int DATA_LENGTH = 4;
+    
     private static final byte RDS_SEARCH_BITMASK = (byte) 0x80;
     private static final byte TA_BITMASK = 0x10;
     private static final byte REG_MODE_BITMASK = 0x01;
@@ -88,6 +91,10 @@ public class RDSMessage extends AbstractMessage {
 
     public RDSMessage(CanMessage message) throws MessageException
     {
+        if (message.getId() != ID) {
+            throw new MessageException(String.format("RDS message must have ID %s", ID));
+        }
+        
         byte[] data = message.getData();
         
         if (data.length != DATA_LENGTH) {
