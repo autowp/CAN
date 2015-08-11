@@ -1,9 +1,11 @@
-package com.autowp.psa.message;
+package com.autowp.psa.message.cdchanger;
 
 import com.autowp.can.CanFrame;
 import com.autowp.can.CanFrameException;
 import com.autowp.can.CanMessage;
 import com.autowp.psa.CanComfort;
+import com.autowp.psa.message.AbstractMessage;
+import com.autowp.psa.message.MessageException;
 
 public class CDChangerStatusMessage extends AbstractMessage {
     private static final int ID = CanComfort.ID_CD_CHANGER_STATUS;

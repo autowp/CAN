@@ -1,5 +1,8 @@
 package com.autowp.psa.message;
 
+import com.autowp.can.CanFrame;
+import com.autowp.can.CanFrameException;
+
 public abstract class AbstractMessage {
     protected void assertConstBits(byte[] data, byte[] mask, byte[] value) throws MessageException
     {
@@ -14,5 +17,10 @@ public abstract class AbstractMessage {
                 throw new MessageException(str);
             }
         }
+    }
+    
+    public CanFrame assembleFrame() throws CanFrameException 
+    {
+        return null;
     }
 }

@@ -11,15 +11,19 @@ public class CanComfort {
     public static final int ID_CURRENT_CD_TRACK = 0x0A4;
     public static final int ID_DISPLAY_UNKNOWN1 = 0x0DF;
     public static final int ID_PARKTRONIC = 0x0E1;
+    public static final int ID_CD_CHANGER_DISK = 0x0E2;
     public static final int ID_BSI_INFO = 0x0F6;
     public static final int ID_TRACK_LIST = 0x125;
     public static final int ID_RADIO_CD_CHANGER_COMMAND = 0x131;
+    public static final int ID_CD_CHANGER_DISK2 = 0x162;
     public static final int ID_RADIO_STATUS = 0x165;
     public static final int ID_DISPLAY_STATUS = 0x167;
     public static final int ID_CD_CHANGER_STATUS = 0x1A0;
     public static final int ID_BSI_INFO_WINDOW = 0x1A1;
+    public static final int ID_CD_CHANGER_TRACKS_COUNT = 0x1A2;
     public static final int ID_VOLUME = 0x1A5;
     public static final int ID_RADIO_1 = 0x1E0;
+    public static final int ID_CD_CHANGER_CURRENT_TRACK = 0x1E2;
     public static final int ID_DISPLAY_CONDITIONING = 0x1ED;
     public static final int ID_AUDIO_MENU = 0x1E5;
     public static final int ID_COLUMN_KEYPAD = 0x21F;
@@ -30,14 +34,21 @@ public class CanComfort {
     public static final int ID_TIME = 0x3F6;
     public static final int ID_RADIO_PING = 0x520;
     public static final int ID_DISPLAY_PING = 0x525;
+    public static final int ID_CD_CHANGER_PING = 0x531;
     public static final int ID_RADIO_WELCOME = 0x5E0;
     public static final int ID_DISPLAY_WELCOME = 0x5E5;
+    public static final int ID_CD_CHANGER_WELCOME = 0x5F1;
     
     public static final int BSI_STATUS_PERIOD = 100;
     public static final int BSI_INFO_PERIOD = 500;
     public static final int BSI_INFO_WINDOW_PERIOD = 200;
     public static final int BSI_VIN_PERIOD = 1000;
     public static final int CD_CHANGER_STATUS_PERIOD = 500;
+    public static final int CD_CHANGER_PING_PERIOD = 1000;
+    public static final int CD_CHANGER_TRACKS_COUNT_PERIOD = 500;
+    public static final int CD_CHANGER_DISK_PERIOD = 1000;
+    public static final int CD_CHANGER_DISK2_PERIOD = 100;
+    public static final int CD_CHANGER_CURRENT_TRACK_PERIOD = 500;
     
     public static final int VIN_DELAY = 300;
     public static final int VIN_LENGTH = 8;
