@@ -113,7 +113,11 @@ public class CDChangerDisk2Message extends AbstractMessage {
     
     public CanFrame assembleFrame() throws CanFrameException 
     {
-        byte data[] = {0x20, 0x01, 0x06, 0x00, 0x00, 0x00, 0x00};
+        byte data[] = {0x20, 0x01, 0x06, 0x00, 0x00, 0x01, 0x00};
+        
+        if (mUnknown0) {
+            data[0] = (byte) (data[0] | UNKNOWN0_BITMASK);
+        }
         
         if (mLoading) {
             data[1] = (byte) (data[1] | LOADING_BITMASK);
