@@ -1,5 +1,8 @@
 package com.autowp.psa.cdchanger;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,13 +10,21 @@ import com.autowp.can.CanClient;
 import com.autowp.can.CanClientException;
 import com.autowp.can.CanFrame;
 import com.autowp.can.CanFrameException;
+import com.autowp.can.CanMessage;
 import com.autowp.psa.CanComfort;
 import com.autowp.psa.message.AbstractMessage;
+import com.autowp.psa.message.MessageException;
+import com.autowp.psa.message.RadioCDChangerCommandMessage;
 import com.autowp.psa.message.cdchanger.*;
 
-public class CDChanger {
+public class CDChanger implements CanClient.OnCanMessageTransferListener {
     private CanClient mCanClient;
     private boolean mLoopback = true;
+    
+    private static final byte DEFAULT_TOTAL_TRACKS = 3;
+    private static final byte DEFAULT_TRACK = 2;
+    private static final byte DEFAULT_DISK = 1;
+    private static final byte DEFAULT_ICON = CDChangerDisk2Message.ICON_PLAY;
     
     private CDChangerWelcomeMessage mWelcomeMessage = new CDChangerWelcomeMessage();
     
@@ -34,6 +45,17 @@ public class CDChanger {
     
     private CDChangerCurrentTrackMessage mCurrentTrackMessage = new CDChangerCurrentTrackMessage();
     private Timer mCurrentTrackTimer;
+    
+    public interface OnChangeListener {
+        public void handle();
+        
+        public void handleForward();
+
+        public void handleBackward();
+    }
+    
+    private List<OnChangeListener> mChangeListeners = 
+            new ArrayList<OnChangeListener>();
     
     private class MessageTimerTask extends TimerTask {
         private AbstractMessage mMessage;
@@ -59,6 +81,13 @@ public class CDChanger {
     
     public CDChanger(CanClient canClient) {
         mCanClient = canClient;
+        
+        mDiskMessage.setDisk(DEFAULT_DISK);
+        mDisk2Message.setDisk(DEFAULT_DISK);
+        mTracksCountMessage.setCount(DEFAULT_TOTAL_TRACKS);
+        mCurrentTrackMessage.setTrackNumber(DEFAULT_TRACK);
+        mDisk2Message.setUnknown0(true);
+        mDisk2Message.setIcon(DEFAULT_ICON);
     }
     
     public void start() throws CanClientException, CanFrameException {
@@ -70,9 +99,11 @@ public class CDChanger {
         startDisk();
         startDisk2();
         startCurrentTrack();
+        startListen();
     }
     
     public void stop() {
+        stopListen();
         stopStatus();
         stopPing();
         stopTracksCount();
@@ -166,7 +197,6 @@ public class CDChanger {
         stopDisk2();
         
         mDisk2Message.setLoading(false);
-        mDisk2Message.setUnknown0(true);
         
         MessageTimerTask task = new MessageTimerTask(mDisk2Message);
         
@@ -259,5 +289,95 @@ public class CDChanger {
     
     public void setTotalTracks(byte value) {
         mTracksCountMessage.setCount(value);
+    }
+    
+    public void startListen() {
+        mCanClient.addEventListener(this);
+    }
+    
+    public void stopListen() {
+        mCanClient.removeEventListener(this);
+    }
+    
+    public synchronized void addEventListener(OnChangeListener listener) {
+        mChangeListeners.add(listener);
+    }
+    
+    public synchronized void removeEventListener(OnChangeListener listener){
+        mChangeListeners.remove(listener);
+    }
+    
+    @Override
+    public void handleCanMessageReceivedEvent(CanMessage message) {
+        if (message.getId() == CanComfort.ID_RADIO_CD_CHANGER_COMMAND) {
+            try {
+                boolean change = false;
+                
+                RadioCDChangerCommandMessage radioMessage = new RadioCDChangerCommandMessage(message);
+                if (radioMessage.isTrackForward()) {
+                    System.out.println("FORWARD");
+                    setCurrentTrack((byte) (getCurrentTrack() + 1));
+                    change = true;
+                }
+                if (radioMessage.isTrackBack()) {
+                    System.out.println("BACKWARD");
+                    setCurrentTrack((byte) (getCurrentTrack() - 1));
+                    change = true;
+                }
+                byte gotoTrack = radioMessage.getGotoTrack();
+                if (gotoTrack != 0) {
+                    byte diff = (byte) (gotoTrack - getCurrentTrack());
+                    
+                    if (diff != 0) {
+                    
+                        if (diff == 1 || (diff < -1 && gotoTrack == 1)) {
+                            fireForwardEvent();
+                        }
+                        
+                        if (diff == -1 || (diff > 1 && gotoTrack == getTotalTracks())) {
+                            fireBackwardEvent();
+                        }
+                        
+                        setCurrentTrack(gotoTrack);
+                        change = true;
+                    }
+                }
+                
+                if (change) {
+                    fireChangeEvent();
+                }
+                
+            } catch (MessageException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void fireBackwardEvent() {
+        Iterator<OnChangeListener> i = mChangeListeners.iterator();
+        while(i.hasNext())  {
+            ((OnChangeListener) i.next()).handleBackward();
+        }
+    }
+
+    private void fireForwardEvent() {
+        Iterator<OnChangeListener> i = mChangeListeners.iterator();
+        while(i.hasNext())  {
+            ((OnChangeListener) i.next()).handleForward();
+        }
+    }
+
+    @Override
+    public void handleCanMessageSentEvent(CanMessage message) {
+        
+    }
+    
+    private synchronized void fireChangeEvent()
+    {
+        Iterator<OnChangeListener> i = mChangeListeners.iterator();
+        while(i.hasNext())  {
+            ((OnChangeListener) i.next()).handle();
+        }
     }
 }

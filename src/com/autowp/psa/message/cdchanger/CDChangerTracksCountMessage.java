@@ -10,7 +10,7 @@ import com.autowp.psa.message.MessageException;
 public class CDChangerTracksCountMessage extends AbstractMessage {
     private static final int ID = CanComfort.ID_CD_CHANGER_TRACKS_COUNT;
     private static final int DATA_LENGTH = 5;
-    private byte mCount;
+    private byte mCount = 1;
     
     public CDChangerTracksCountMessage() {
         

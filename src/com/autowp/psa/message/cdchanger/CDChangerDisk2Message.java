@@ -14,14 +14,23 @@ public class CDChangerDisk2Message extends AbstractMessage {
     private static final byte UNKNOWN0_BITMASK = (byte) 0x80;
     
     private static final byte LOADING_BITMASK = (byte) 0x80;
-    private static final byte UNKNOWN1_BITMASK = 0x02;
+    private static final byte ICON_BITMASK = 0x07;
     
     private static final byte DISK_BITMASK = 0x0F;
+    
+    public static final byte ICON_NONE = 0;
+    public static final byte ICON_STOP = 1;
+    public static final byte ICON_PAUSE = 2;
+    public static final byte ICON_PLAY = 3;
+    public static final byte ICON_FAST_FORWARD = 4;
+    public static final byte ICON_FAST_BACKWARD = 5;
+    public static final byte ICON_NONE2 = 6;
+    public static final byte ICON_PLAY2 = 7;
     
     private byte mDisk = 1;
     private boolean mLoading;
     private boolean mUnknown0;
-    private boolean mUnknown1;
+    private byte mIcon;
     private byte mUnknown5;
     
     public CDChangerDisk2Message() {
@@ -44,7 +53,7 @@ public class CDChangerDisk2Message extends AbstractMessage {
             data,
             new byte[] { 
                 ~UNKNOWN0_BITMASK,
-                ~(LOADING_BITMASK | UNKNOWN1_BITMASK),
+                ~(LOADING_BITMASK | ICON_BITMASK),
                 (byte) 0xFF,
                 ~DISK_BITMASK,
                 (byte) 0xFF,
@@ -53,7 +62,7 @@ public class CDChangerDisk2Message extends AbstractMessage {
             },
             new byte[] { 
                 0x20,
-                0x01,
+                0x00,
                 0x06,
                 0x00,
                 0x00,
@@ -65,7 +74,7 @@ public class CDChangerDisk2Message extends AbstractMessage {
         mUnknown0 = (data[0] & UNKNOWN0_BITMASK) != 0x00;
         
         mLoading = (data[1] & LOADING_BITMASK) != 0x00;
-        mUnknown1 = (data[1] & UNKNOWN1_BITMASK) != 0x00;
+        mIcon = (byte) (data[1] & ICON_BITMASK);
         
         mDisk  = (byte) (data[3] & DISK_BITMASK);
 
@@ -95,12 +104,12 @@ public class CDChangerDisk2Message extends AbstractMessage {
         mUnknown0 = unknown0;
     }
 
-    public boolean isUnknown1() {
-        return mUnknown1;
+    public byte getIcon() {
+        return mIcon;
     }
 
-    public void setUnknown1(boolean unknown1) {
-        mUnknown1 = unknown1;
+    public void setIcon(byte icon) {
+        mIcon = icon;
     }
     
     public byte getUnknown5() {
@@ -113,7 +122,7 @@ public class CDChangerDisk2Message extends AbstractMessage {
     
     public CanFrame assembleFrame() throws CanFrameException 
     {
-        byte data[] = {0x20, 0x01, 0x06, 0x00, 0x00, 0x01, 0x00};
+        byte data[] = {0x20, 0x00, 0x06, 0x00, 0x00, 0x01, 0x00};
         
         if (mUnknown0) {
             data[0] = (byte) (data[0] | UNKNOWN0_BITMASK);
@@ -122,6 +131,7 @@ public class CDChangerDisk2Message extends AbstractMessage {
         if (mLoading) {
             data[1] = (byte) (data[1] | LOADING_BITMASK);
         }
+        data[1] = (byte) (((mIcon & ICON_BITMASK)) | data[1]);
         data[3] = (byte) (((mDisk & DISK_BITMASK)) | data[3]);
         
         return new CanFrame(ID, data);
