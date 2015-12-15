@@ -127,7 +127,7 @@ public abstract class CanHacker extends CanAdapter {
      */
     public static final String W = "W";
     
-    protected static final char COMMAND_DELIMITER = '\r';
+    public static final char COMMAND_DELIMITER = '\r';
     
     protected static final char BELL = (char)0x07;
     
